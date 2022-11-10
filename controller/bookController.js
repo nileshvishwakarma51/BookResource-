@@ -20,7 +20,7 @@ const upload = multer({
       cb({ message: "Only allowed file types: jpeg, jpg and png" });
     }
   },
-}).single("bookImg");
+}).single("bookImgURL");
 
 const deleteFile = (req) => {
   fs.unlink(req.file.path, function (err) {
@@ -74,38 +74,47 @@ let getBook = async (req, res) => {
     conditionObj.bookName = { $regex: req.query.bookName, $options: "i" };
   }
   try {
-    let getBook = await bookModelMethod.getBook(conditionObj);    
+    let getBook = await bookModelMethod.getBook(conditionObj);
     if (!getBook.length) {
       return res.status(404).send(`Book not found: ${req.query.bookName}`);
     }
-    return res
-      .status(200)
-      .send(getBook);
+    return res.status(200).send(getBook);
   } catch (err) {
     return res.status(400).send(err);
   }
 };
 
 let updateBook = async (req, res) => {
-  try {
-    let bookId = req.params.id;
-    let updatedBook = await bookModelMethod.updateBook(bookId, req.body);
-    return res
-    .status(200)
-    .send(`Book updated Sucessfully ${updatedBook}`);
-  } catch (err) {
-    console.log(err);
-    return res.status(400).send(err);
-  }
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.send(err.message);
+    } else {
+      try {
+        let bookId = req.params.id;
+        req.body.bookImgURL = req.file.filename;
+        let updatedBook = await bookModelMethod.updateBook(bookId, req.body);
+        if (updatedBook) {
+          return res
+            .status(200)
+            .send(`Book updated Sucessfully ${updatedBook}`);
+        }
+        return res.send(`Book not found for ${bookId}`);
+      } catch (err) {
+        console.log(err);
+        return res.status(400).send(err);
+      }
+    }
+  });
 };
 
 let deleteBook = async (req, res) => {
   try {
     let bookId = req.params.id;
     let deletedBook = await bookModelMethod.deleteBook(bookId);
-    return res
-    .status(200)
-    .send(`Book deleted Sucessfully ${deletedBook}`);
+    if (deletedBook) {
+      return res.status(200).send(`Book deleted Sucessfully ${deletedBook}`);
+    }
+    return res.send(`Book not found for ${bookId}`);
   } catch (err) {
     console.log(err);
     return res.status(400).send(err);
