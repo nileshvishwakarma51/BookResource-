@@ -1,0 +1,26 @@
+{
+  "name": "bookresource-",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nileshvishwakarma51/BookResource-.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nileshvishwakarma51/BookResource-/issues"
+  },
+  "homepage": "https://github.com/nileshvishwakarma51/BookResource-#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.18.2",
+    "mongodb": "^4.11.0",
+    "mongoose": "^6.7.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}
